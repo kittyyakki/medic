@@ -1,3 +1,4 @@
+//회원가입
 document.addEventListener("DOMContentLoaded", function () {
   const signupForm = document.getElementById("signup-form");
 
@@ -9,6 +10,11 @@ document.addEventListener("DOMContentLoaded", function () {
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
       const confirmPassword = document.getElementById("confirm-password").value;
+
+      if (!auth.currentUser || !auth.currentUser.emailVerified) {
+        alert("이메일 인증을 완료해야 회원가입할 수 있습니다.");
+        return;
+      }
 
       // 비밀번호 정규식 (최소 8자, 대소문자, 숫자, 특수문자 포함)
       const passwordRegex =
@@ -86,4 +92,67 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  // // 🔹 Firebase 프로젝트 설정 정보
+  // const firebaseConfig = {
+  //   apiKey: "AIzaSyAKFubZGdzxgqXY_PVZp-MyvYjbSAHY3fM",
+  //   authDomain: "medic.firebaseapp.com",
+  //   projectId: "medic",
+  //   storageBucket: "medic.appspot.com",
+  //   messagingSenderId: "medic",
+  //   appId: "medic",
+  // };
+
+  // // 🔹 Firebase 초기화
+  // firebase.initializeApp(firebaseConfig);
+  // const auth = firebase.auth();
+
+  // 📌 이메일 인증 코드 전송
+  document.getElementById("send-code").addEventListener("click", async () => {
+    const email = document.getElementById("email").value;
+    if (!email) return alert("이메일을 입력하세요!");
+
+    try {
+      await auth.sendSignInLinkToEmail(email, {
+        url: "http://localhost:5500/signup.html", // 인증 후 이동할 페이지
+        handleCodeInApp: true,
+      });
+
+      // 🔹 로컬 스토리지에 이메일 저장 (로그인 시 사용)
+      window.localStorage.setItem("emailForSignIn", email);
+
+      alert("이이메일로 인증 링크를 보냈습니다! 인증 후 다시 로그인하세요.");
+    } catch (error) {
+      alert("이메일 전송 실패: " + error.message);
+    }
+  });
+
+  // 📌 인증 확인 후 회원가입 처리
+  if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
+    let email = window.prompt("가입 시 입력한 이메일을 입력하세요:");
+    auth
+      .signInWithEmailLink(email, window.location.href)
+      .then(() => {
+        alert("이메일 인증 완료!");
+      })
+      .catch((error) => alert("인증 실패: " + error.message));
+  }
+  // 📌 인증 링크에서 회원가입 처리
+  document.addEventListener("DOMContentLoaded", function () {
+    if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
+      let email = window.localStorage.getItem("emailForSignIn");
+
+      if (!email) {
+        email = window.prompt("가입 시 입력한 이메일을 입력하세요:");
+      }
+
+      auth
+        .signInWithEmailLink(email, window.location.href)
+        .then(() => {
+          alert("이메일 인증 완료! 이제 회원가입을 진행하세요.");
+          window.localStorage.removeItem("emailForSignIn"); // 인증 후 삭제
+        })
+        .catch((error) => alert("인증 실패: " + error.message));
+    }
+  });
 });
