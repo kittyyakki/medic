@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>회원가입</title>
     <link rel="stylesheet" href="signup.css" />
+    <!-- <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script> -->
   </head>
   <body>
     <div class="signup-container">
@@ -12,6 +14,7 @@
       <form id="signup-form">
         <input type="text" id="name" placeholder="이름" required />
         <input type="email" id="email" placeholder="이메일" required />
+        <button type="button" id="send-code">이메일 인증</button>
         <input type="password" id="password" placeholder="비밀번호" required />
         <input
           type="password"
