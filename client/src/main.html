@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>병원 홈페이지</title>
     <link rel="stylesheet" href="main.css" />
+    <!-- <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script> -->
   </head>
   <body>
     <header>
@@ -61,6 +63,19 @@
             localStorage.removeItem("loggedInUser"); // 로그인 정보 삭제
             alert("로그아웃 되었습니다.");
             window.location.href = "login.html"; // 로그인 페이지로 이동
+          });
+
+          //이메일 인증 표시
+          firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              if (user.emailVerified) {
+                document.getElementById("user-status").innerText =
+                  "이메일 인증 완료 ✅";
+              } else {
+                document.getElementById("user-status").innerText =
+                  "이메일 인증 필요 ❌";
+              }
+            }
           });
         }
       });
