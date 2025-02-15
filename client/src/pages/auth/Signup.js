@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./Signup.css";
 
 const Signup = () => {
@@ -18,9 +19,11 @@ const Signup = () => {
     alert(`인증 코드가 ${email}로 전송되었습니다.`);
   };
 
-  const handleSignup = (event) => {
+  //회원가입 버튼 클릭 시 실행(백엔드 API 호출)
+  const handleSignup = async (event) => {
     event.preventDefault();
 
+    //비밀번호 유효성 검사
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
@@ -44,11 +47,22 @@ const Signup = () => {
       return;
     }
 
-    users.push({ name, email, password });
-    localStorage.setItem("users", JSON.stringify(users));
+    try {
+      const response = await axios.post("/api/auth/register", {
+        name,
+        email,
+        password,
+      });
 
-    alert("회원가입 성공! 로그인 페이지로 이동합니다.");
-    navigate("/login");
+      users.push({ name, email, password });
+      localStorage.setItem("users", JSON.stringify(users));
+
+      alert("회원가입 성공! 로그인 페이지로 이동합니다.");
+      navigate("/login");
+    } catch (error) {
+      console.error("회원가입 오류:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "회원가입 실패");
+    }
   };
 
   return (
