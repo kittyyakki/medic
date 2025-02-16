@@ -8,7 +8,7 @@ const router = express.Router(); // Express의 Router 객체를 생성합니다.
 // 회원가입 엔드포인트
 router.post("/register", async (req, res) => {
   console.log("📥 받은 데이터:", req.body); // 요청 데이터 확인
-  
+
   // ✅ "/api/auth/register"가 자동 적용됨
   const { email, password, name } = req.body;
   // 요청 본문에서 이메일, 비밀번호, 이름을 추출합니다.
@@ -19,8 +19,10 @@ router.post("/register", async (req, res) => {
   }
 
   try {
+    console.log("🔄 비밀번호 해시화 시작...");
     // 비밀번호를 해시화합니다. 10은 해시화를 위한 salt 라운드 수입니다.
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("✅ 비밀번호 해시화 성공:", hashedPassword);
 
     // 사용자 정보를 데이터베이스에 삽입하는 SQL 쿼리.
     const sql = "INSERT INTO users (email, password, name) VALUES (?, ?, ?)";
@@ -31,10 +33,12 @@ router.post("/register", async (req, res) => {
         console.error("회원가입 오류:", err);
         return res.status(500).json({ message: "회원가입 실패" });
       }
+      console.log("✅ 회원가입 성공:", result);
       // 성공 시 201 상태 코드와 함께 응답합니다.
       res.status(201).json({ message: "회원가입 성공" });
     });
   } catch (error) {
+    console.error("❌ 서버 오류 (bcrypt.hash 실패 가능성):", error);
     // 비밀번호 해시화 중 오류 발생 시 500 상태 코드로 응답합니다.
     res.status(500).json({ message: "서버 오류" });
   }
