@@ -19,11 +19,11 @@ const Signup = () => {
     alert(`인증 코드가 ${email}로 전송되었습니다.`);
   };
 
-  //회원가입 버튼 클릭 시 실행(백엔드 API 호출)
+  // 회원가입 버튼 클릭 시 실행
   const handleSignup = async (event) => {
     event.preventDefault();
 
-    //비밀번호 유효성 검사
+    // 비밀번호 유효성 검사
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
 
@@ -39,23 +39,16 @@ const Signup = () => {
       return;
     }
 
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-
-    if (users.find((user) => user.email === email)) {
-      alert("이미 가입된 이메일입니다.");
-      navigate("/login");
-      return;
-    }
-
     try {
-      const response = await axios.post("/api/auth/register", {
-        name,
-        email,
-        password,
-      });
-
-      users.push({ name, email, password });
-      localStorage.setItem("users", JSON.stringify(users));
+      // 백엔드 API로 회원가입 요청
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        {
+          name,
+          email,
+          password,
+        }
+      );
 
       alert("회원가입 성공! 로그인 페이지로 이동합니다.");
       navigate("/login");
