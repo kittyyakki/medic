@@ -2,13 +2,12 @@ require("dotenv").config();
 const express = require("express");
 const db = require("./db"); // 방금 만든 MySQL 설정 불러오기
 const cors = require("cors");
-const authRouter = require("./routes/auth");
-
 const app = express();
 const PORT = process.env.PORT || 5000;
+const authRouter = require("./routes/auth"); //회원가입, 로그인 라우터
 
 // 미들웨어 설정
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(cors()); // 모든 도메인에서 요청 가능하도록 변경
 app.use(express.json()); // JSON 파싱(데이터와 파일을 전송할 때 필요)
 app.use("/api/auth", authRouter); // /api/auth 경로로 라우팅
 

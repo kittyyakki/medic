@@ -1,16 +1,9 @@
-// Express 서버 프레임워크를 로드합니다.
-const express = require("express");
-// 비밀번호 해시를 위한 bcrypt 모듈을 로드합니다.
-const bcrypt = require("bcrypt");
-// JWT(제이슨 웹 토큰) 생성 및 검증을 위한 모듈을 로드합니다.
-const jwt = require("jsonwebtoken");
-// MySQL 데이터베이스 연결 모듈을 로드합니다.
-const db = require("../db");
-// 환경 변수를 로드합니다.
-require("dotenv").config();
-
-// Express의 Router 객체를 생성합니다.
-const router = express.Router();
+const express = require("express");// Express 서버 프레임워크를 로드합니다.
+const bcrypt = require("bcrypt");// 비밀번호 해시를 위한 bcrypt 모듈을 로드합니다.
+const jwt = require("jsonwebtoken");// JWT(제이슨 웹 토큰) 생성 및 검증을 위한 모듈을 로드합니다.
+const db = require("../db");// MySQL 데이터베이스 연결 모듈을 로드합니다.
+require("dotenv").config();// 환경 변수를 로드합니다.
+const router = express.Router();// Express의 Router 객체를 생성합니다.
 
 // 회원가입 엔드포인트
 router.post("/register", async (req, res) => {
@@ -29,6 +22,7 @@ router.post("/register", async (req, res) => {
 
     // 사용자 정보를 데이터베이스에 삽입하는 SQL 쿼리.
     const sql = "INSERT INTO users (email, password, name) VALUES (?, ?, ?)";
+    
     db.query(sql, [email, hashedPassword, name], (err, result) => {
       if (err) {
         // SQL 쿼리 실행 중 오류 발생 시 콘솔에 기록하고 클라이언트에게 응답합니다.
