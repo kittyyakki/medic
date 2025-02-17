@@ -22,16 +22,19 @@ const Main = () => {
     fetchItems(); // 초기 데이터 로드
   }, []); //무한 스크롤을 위해 빈 배열 전달
 
-  const fetchItems = async () => { //무한 스크롤을 위한 데이터 불러오기 함수
-    if (loading || !hasMore) return;//로딩 중이거나 추가 데이터가 없으면 중단
-    setLoading(true);//로딩 상태로 변경
+  const fetchItems = async () => {
+    //무한 스크롤을 위한 데이터 불러오기 함수
+    if (loading || !hasMore) return; //로딩 중이거나 추가 데이터가 없으면 중단
+    setLoading(true); //로딩 상태로 변경
 
     try {
       const response = await axios.get(`/api/news?page=${page}`); // 병원 소식 API 호출
-      if (response.data.length > 0) {//불러온 데이터가 있을 경우
-        setItems((prevItems) => [...prevItems, ...response.data]);//데이터 추가
-        setPage((prevPage) => prevPage + 1);//페이지 번호 증가
-      } else {//불러온 데이터가 없을 경우
+      if (response.data.length > 0) {
+        //불러온 데이터가 있을 경우
+        setItems((prevItems) => [...prevItems, ...response.data]); //데이터 추가
+        setPage((prevPage) => prevPage + 1); //페이지 번호 증가
+      } else {
+        //불러온 데이터가 없을 경우
         setHasMore(false); // 더 이상 불러올 데이터가 없을 경우
       }
     } catch (error) {
@@ -42,28 +45,34 @@ const Main = () => {
   };
 
   // ✅ IntersectionObserver를 이용해 무한 스크롤 감지
-  useEffect(() => {//로더 요소를 감지
-    const observer = new IntersectionObserver(//IntersectionObserver 생성
-      (entries) => {//콜백 함수
-        if (entries[0].isIntersecting) {//로더 요소가 화면에 보일 때
-          fetchItems();//데이터 불러오기 함수 호출
+  useEffect(() => {
+    //로더 요소를 감지
+    const observer = new IntersectionObserver( //IntersectionObserver 생성
+      (entries) => {
+        //콜백 함수
+        if (entries[0].isIntersecting) {
+          //로더 요소가 화면에 보일 때
+          fetchItems(); //데이터 불러오기 함수 호출
         }
       },
-      { threshold: 1 }//임계값: 1
+      { threshold: 1 } //임계값: 1
     );
 
-    if (loader.current) {// 로더 요소가 있을 경우
-      observer.observe(loader.current);//로더 요소 감지
+    if (loader.current) {
+      // 로더 요소가 있을 경우
+      observer.observe(loader.current); //로더 요소 감지
     }
 
-    return () => {//컴포넌트 언마운트 시
+    return () => {
+      //컴포넌트 언마운트 시
       if (loader.current) observer.unobserve(loader.current);
-    };//로더 요소 감지 해제
-  }, [loader]);//로더 요소가 변경될 때만 실행
+    }; //로더 요소 감지 해제
+  }, [loader]); //로더 요소가 변경될 때만 실행
 
-  const handleLogout = () => {//로그아웃 함수
-    localStorage.removeItem("loggedInUser");//로그인 정보 삭제
-    alert("로그아웃 되었습니다.");//알림 메시지
+  const handleLogout = () => {
+    //로그아웃 함수
+    localStorage.removeItem("loggedInUser"); //로그인 정보 삭제
+    alert("로그아웃 되었습니다."); //알림 메시지
     window.location.href = "/login";
   };
 
@@ -102,15 +111,20 @@ const Main = () => {
       </header>
       <main>
         <p>환영합니다! 여기에 병원 정보를 추가하세요.</p>
-        <div className="news-list">//데이터 목록
-          {items.map((item, index) => (//데이터 목록 출력
-            <div key={index} className="news-item">//데이터 항목
-              <h3>{item.title}</h3>//제목
-              <p>{item.content}</p>//내용
-            </div>
-          ))}
+        <div className="news-list">
+          {items.map(
+            (
+              item,
+              index //데이터 목록 출력
+            ) => (
+              <div key={index} className="news-item">
+                <h3>{item.title}</h3>
+                <p>{item.content}</p>
+              </div>
+            )
+          )}
         </div>
-        {loading && <p>로딩 중...</p>}//로딩 중일 때 메시지 출력
+        {loading && <p>로딩 중...</p>}
         <div
           ref={loader}
           style={{ height: "20px", background: "transparent" }}
